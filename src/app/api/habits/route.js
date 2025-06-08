@@ -1,6 +1,6 @@
 import { connectToDatabase } from "@/lib/db";
 
-export async function GET(request) {
+export async function GET() {
   try {
     const connection = await connectToDatabase();
     const [rows] = await connection.execute("SELECT * FROM habits");

@@ -4,7 +4,7 @@ export async function connectToDatabase() {
   return createConnection({
     host: "localhost",
     user: "root",
-    password: "",
+    password: "saxroot",
     database: "db_activity_habits",
   });
 }

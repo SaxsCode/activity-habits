@@ -1,6 +1,12 @@
 import Image from "next/image";
 
-export default function Home() {
+export default async function Home() {
+  const result = await fetch("http://localhost:3000/api/habits", {
+    cache: "no-store",
+  });
+
+  const habits = await result.json();
+
   return (
     <div>
       <div className="activity">
@@ -10,16 +16,22 @@ export default function Home() {
       <div className="habits">
         <p>Today:</p>
         <table>
-          <tr>
-            <th>Habit</th>
-            <th>Completed</th>
-          </tr>
-          <tr>
-            <td>Programmeren</td>
-            <td>
-              <input type="checkbox" />
-            </td>
-          </tr>
+          <thead>
+            <tr>
+              <th>Habit</th>
+              <th>Completed</th>
+            </tr>
+          </thead>
+          <tbody>
+            {habits.map((habit) => (
+              <tr key={habit.id}>
+                <td>{habit.title}</td>
+                <td>
+                  <input type="checkbox" />
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     </div>
