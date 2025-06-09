@@ -3,7 +3,8 @@ import { connectToDatabase } from "@/lib/db";
 export async function GET() {
   try {
     const connection = await connectToDatabase();
-    const [rows] = await connection.execute(`
+
+    let [rows] = await connection.execute(`
       SELECT 
         log.id AS log_id,
         log.date,
@@ -12,8 +13,36 @@ export async function GET() {
         habit.title
       FROM habits_log AS log
       INNER JOIN habits AS habit ON habit.id = log.habit_id
-      WHERE log.date = CURDATE()
+      WHERE log.date = CURDATE()  
     `);
+
+    // if log is not set yet
+    if (rows.length === 0) {
+      const [fallbackRows] = await connection.execute(`
+        SELECT 
+          habit.id AS habit_id,
+          habit.title
+        FROM habits AS habit
+        WHERE habit.active = 1
+      `);
+
+      const insertedLogs = [];
+      for (const habit of fallbackRows) {
+        const [result] = await connection.execute(
+          "INSERT INTO habits_log (habit_id, date, completed) VALUES (?, CURDATE(), 0)",
+          [habit.habit_id],
+        );
+        insertedLogs.push({
+          log_id: result.insertId,
+          date: "CURDATE()",
+          completed: 0,
+          habit_id: habit.habit_id,
+          title: habit.title,
+        });
+      }
+
+      rows = insertedLogs;
+    }
 
     await connection.end();
 
