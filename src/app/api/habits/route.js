@@ -3,7 +3,16 @@ import { connectToDatabase } from "@/lib/db";
 export async function GET() {
   try {
     const connection = await connectToDatabase();
-    const [rows] = await connection.execute("SELECT * FROM habits");
+    const [rows] = await connection.execute(`
+      SELECT 
+        log.id AS log_id,
+        log.date,
+        habit.id AS habit_id,
+        habit.title
+      FROM habits_log AS log
+      INNER JOIN habits AS habit ON habit.id = log.habit_id
+      WHERE log.date = CURDATE()
+    `);
 
     await connection.end();
 
@@ -27,15 +36,32 @@ export async function POST(request) {
     const data = await request.json();
     const { title } = data;
     const connection = await connectToDatabase();
+
+    // insert habit
     const [row] = await connection.execute(
-      "INSERT INTO `habits` (title) VALUES (?)",
+      "INSERT INTO `habits` (title, created_at) VALUES (?, NOW())",
       [title],
     );
 
     if (!row.affectedRows) {
-      return new Respone(JSON.stringify({ error: "Could not insert habit" }), {
+      return new Response(JSON.stringify({ error: "Could not insert habit" }), {
         status: 404,
       });
+    }
+
+    // insert log
+    const [log] = await connection.execute(
+      "INSERT INTO `habits_log` (habit_id, date, completed) VALUES (?, NOW(), 0)",
+      [row.insertId],
+    );
+
+    if (!log.affectedRows) {
+      return new Response(
+        JSON.stringify({ error: "Could not insert habit log" }),
+        {
+          status: 404,
+        },
+      );
     }
 
     return new Response(JSON.stringify({ id: row.insertId, title }), {
