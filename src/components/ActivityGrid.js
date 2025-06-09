@@ -6,13 +6,13 @@ function getColor(count, total) {
   const percentage = (count / total) * 100;
 
   if (percentage === 100) return "bg-blue-400";
-  if (percentage >= 75) return "bg-gray-200";
+  if (percentage >= 75) return "bg-blue-300";
   if (percentage >= 50) return "bg-gray-400";
-  if (percentage >= 25) return "bg-gray-600";
-  return "bg-gray-200";
+  if (percentage >= 25) return "bg-gray-500";
+  return "bg-gray-600";
 }
 
-export default function ActivityGrid({ data }) {
+export default function ActivityGrid({ data, onDayClick }) {
   if (!data || data.length === 0) {
     return <div>No activity data</div>;
   }
@@ -34,9 +34,11 @@ export default function ActivityGrid({ data }) {
       {weeks.map((week, i) => (
         <div key={i} className="flex flex-col mr-1">
           {week.map((day, j) => {
-            console.log("Day:", day);
             return (
               <div
+                onClick={() =>
+                  onDayClick(day.totalHabits === 0 ? null : day.date)
+                }
                 key={j}
                 className={`w-4 h-4 mb-1 rounded ${getColor(day.completed, day.totalHabits)}`}
                 title={`${day.date}: ${day.completed} completed`}

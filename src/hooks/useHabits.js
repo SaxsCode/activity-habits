@@ -17,9 +17,15 @@ export default function useHabits() {
   };
 
   // Read
-  const fetchHabits = async () => {
+  const fetchHabits = async (selectedDate = null) => {
     setLoading(true);
-    const result = await fetch("/api/habits", { cache: "no-store" });
+    const url = selectedDate
+      ? `/api/habits?date=${encodeURIComponent(selectedDate)}`
+      : "/api/habits";
+
+    const result = await fetch(url, {
+      cache: "no-store",
+    });
     const data = await result.json();
     setHabits(Array.isArray(data) ? data : []);
     setLoading(false);
@@ -63,6 +69,7 @@ export default function useHabits() {
   return {
     habits,
     loading,
+    fetchHabits,
     createHabit,
     updateHabit,
     deleteHabit,

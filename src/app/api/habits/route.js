@@ -1,10 +1,17 @@
 import { connectToDatabase } from "@/lib/db";
 
-export async function GET() {
+export async function GET(request) {
   try {
+    const { searchParams } = new URL(request.url);
+    let date = searchParams.get("date");
     const connection = await connectToDatabase();
 
-    let [rows] = await connection.execute(`
+    if (date === null) {
+      date = "CURDATE()";
+    }
+
+    let [rows] = await connection.execute(
+      `
       SELECT 
         log.id AS log_id,
         log.date,
@@ -13,8 +20,10 @@ export async function GET() {
         habit.title
       FROM habits_log AS log
       INNER JOIN habits AS habit ON habit.id = log.habit_id
-      WHERE log.date = CURDATE()  
-    `);
+      WHERE log.date = ?
+    `,
+      [date],
+    );
 
     // if log is not set yet
     if (rows.length === 0) {

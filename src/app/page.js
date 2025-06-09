@@ -10,6 +10,7 @@ export default function Home() {
   const {
     habits,
     loading,
+    fetchHabits,
     createHabit,
     updateHabit,
     deleteHabit,
@@ -17,6 +18,14 @@ export default function Home() {
   } = useHabits();
   const [newHabit, setNewHabit] = useState("");
   const [activityData, setActivityData] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  useEffect(() => {
+    if (selectedDate === null) {
+      return;
+    }
+    fetchHabits(selectedDate);
+  }, [selectedDate]);
 
   useEffect(() => {
     async function loadActivity() {
@@ -40,7 +49,7 @@ export default function Home() {
           <p className="text-lg font-semibold mb-2 dark:text-gray-100">
             Activity:
           </p>
-          <ActivityGrid data={activityData} />
+          <ActivityGrid data={activityData} onDayClick={setSelectedDate} />
         </div>
       </div>
       <div className="flex justify-center">
