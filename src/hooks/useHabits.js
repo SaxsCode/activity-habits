@@ -53,6 +53,13 @@ export default function useHabits() {
     }
   };
 
+  // Activity
+  const fetchActivityLogs = async () => {
+    const result = await fetch("/api/activity");
+    if (!result.ok) throw new Error("Failed to fetch activity logs");
+    return result.json();
+  };
+
   return {
     habits,
     loading,
@@ -60,5 +67,6 @@ export default function useHabits() {
     updateHabit,
     deleteHabit,
     fetchHabits,
+    fetchActivityLogs,
   };
 }
