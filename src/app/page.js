@@ -21,12 +21,11 @@ export default function Home() {
   useEffect(() => {
     async function loadActivity() {
       const logs = await fetchActivityLogs();
-      console.log(logs);
       const data = await prepareActivityData(logs, 364);
       setActivityData(data);
     }
     loadActivity();
-  }, []); // Only runs once on mount
+  }, [habits]);
 
   const handleNewHabit = async () => {
     if (!newHabit.trim()) return;

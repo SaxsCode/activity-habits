@@ -2,7 +2,7 @@ import React from "react";
 
 function getColor(count, total) {
   if (!total || total === 0) return "bg-gray-800";
-  if (count === 0) return "bg-gray-900";
+  if (count === 0) return "bg-gray-800";
   const percentage = (count / total) * 100;
 
   if (percentage === 100) return "bg-blue-400";
