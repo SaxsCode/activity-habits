@@ -38,6 +38,22 @@ export default function Home() {
       });
   }, []);
 
+  //-- Update
+  const handleComplete = async (logId, completed) => {
+    completed = completed === 1 ? 0 : 1;
+
+    const result = await fetch("/api/habits", {
+      method: "PUT",
+      headers: { "Content-Type": "applicaton/json" },
+      body: JSON.stringify({ id: logId, completed: completed }),
+    });
+    if (result.ok) {
+      const refreshed = await fetch("/api/habits", { cache: "no-store" });
+      const updatedHabits = await refreshed.json();
+      setHabits(Array.isArray(updatedHabits) ? updatedHabits : []);
+    }
+  };
+
   // -- Delete
   const handleDelete = async (habitId) => {
     const result = await fetch("/api/habits", {
@@ -76,7 +92,13 @@ export default function Home() {
                 <tr key={habit.habit_id}>
                   <td>{habit.title}</td>
                   <td>
-                    <input type="checkbox" />
+                    <input
+                      type="checkbox"
+                      checked={habit.completed}
+                      onChange={() =>
+                        handleComplete(habit.log_id, habit.completed)
+                      }
+                    />
                   </td>
                   <td>
                     <button

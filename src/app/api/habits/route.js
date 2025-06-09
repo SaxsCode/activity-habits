@@ -7,6 +7,7 @@ export async function GET() {
       SELECT 
         log.id AS log_id,
         log.date,
+        log.completed,
         habit.id AS habit_id,
         habit.title
       FROM habits_log AS log
@@ -93,12 +94,46 @@ export async function DELETE(request) {
     );
 
     if (result.affectedRows === 0) {
-      return new Respone(JSON.stringify({ error: "Habit not found" }), {
+      return new Response(JSON.stringify({ error: "Habit not found" }), {
         status: 404,
       });
     }
 
     return new Response(JSON.stringify({ message: "Habit deleted" }), {
+      status: 200,
+    });
+  } catch (error) {
+    console.error("Error connecting to the database:", error);
+    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
+      status: 500,
+    });
+  }
+}
+
+export async function PUT(request) {
+  try {
+    const data = await request.json();
+    const { id, completed } = data;
+    const connection = await connectToDatabase();
+
+    if (!id) {
+      return new Response(JSON.stringify({ error: "Missing log ID " }), {
+        status: 400,
+      });
+    }
+
+    const [result] = await connection.execute(
+      "UPDATE `habits_log` SET completed = ? WHERE id = ?",
+      [completed, id],
+    );
+
+    if (result.affectedRows === 0) {
+      return new Response(JSON.stringify({ error: "Habit not found" }), {
+        status: 404,
+      });
+    }
+
+    return new Response(JSON.stringify({ message: "Habit updated" }), {
       status: 200,
     });
   } catch (error) {
