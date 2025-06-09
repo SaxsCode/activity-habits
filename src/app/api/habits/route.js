@@ -88,7 +88,7 @@ export async function DELETE(request) {
     }
 
     const [result] = await connection.execute(
-      "DELETE FROM `habits` WHERE id = ?",
+      "DELETE FROM `habits_log` WHERE habit_id = ? AND date = CURDATE()",
       [id],
     );
 

@@ -46,7 +46,7 @@ export default function Home() {
       body: JSON.stringify({ id: habitId }),
     });
     if (result.ok) {
-      setHabits(habits.filter((habit) => habit.id !== habitId));
+      setHabits(habits.filter((habit) => habit.habit_id !== habitId));
     }
   };
 
@@ -73,7 +73,7 @@ export default function Home() {
               </tr>
             ) : (
               habits.map((habit) => (
-                <tr key={habit.id}>
+                <tr key={habit.habit_id}>
                   <td>{habit.title}</td>
                   <td>
                     <input type="checkbox" />
@@ -81,7 +81,7 @@ export default function Home() {
                   <td>
                     <button
                       type="button"
-                      onClick={() => handleDelete(habit.id)}
+                      onClick={() => handleDelete(habit.habit_id)}
                     >
                       X
                     </button>
