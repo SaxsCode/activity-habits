@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Habit Tracker - WORK IN PROGRESS
+
+A modern, full-stack habit tracking app built with Next.js, MySQL, and Tailwind CSS. Track your daily habits, visualize your progress, and manage your routines securely with user authentication.
+
+---
+
+## Features
+
+- **User Authentication:** Secure login and registration (NextAuth.js or Clerk recommended)
+- **Personalized Habits:** Each user has their own set of habits and logs
+- **Daily Tracking:** Mark habits as complete/incomplete for each day
+- **GitHub-Style Activity Grid:** Visualize your habit streaks and progress with an activity grid inspired by GitHub and GitLab’s contribution graphs
+- **Responsive UI:** Built with Tailwind CSS for a clean, mobile-friendly interface
+- **API-Driven:** All data interactions via RESTful API routes
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/habit-tracker.git
+cd habit-tracker
+```
+### 2. Install Dependencies
+```bash
+npm install
+```
+
+### 3. Configure Environment Variables
+
+Create a `.env.local` file with your database and authentication settings:
+```
+DATABASE_URL=mysql://user:password@localhost:3306/habits_db
+NEXTAUTH_URL=http://localhost:3000
+Add other relevant variables for your auth provider
+```
+
+### 4. Set Up the Database
+
+- Import the provided SQL schema (see `/prisma/schema.sql` or `/db/schema.sql`)
+- Ensure `habits` and `habits_log` tables include a `user_id` column
+
+### 5. Run the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Sign up or log in** to create your personal habit list.
+- **Add new habits** using the input field.
+- **Mark habits as complete** each day in the table.
+- **View your activity grid** to see your progress over time, in a style similar to GitHub/GitLab’s contribution graphs.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Security & Multi-User Support
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- All habits and logs are associated with the currently authenticated user.
+- API routes check authentication and only allow access to the user's own data.
+- No one else can view or modify your habits.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Technologies Used
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Next.js** (App Router)
+- **MySQL** (or compatible SQL database)
+- **Tailwind CSS** (UI)
+- **NextAuth.js** or **Clerk** (authentication)
+- **React** (frontend)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Contributing
+
+Pull requests and issues are welcome! Please open an issue to discuss major changes.
+
+---
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+## Acknowledgments
+
+- Inspired by GitHub and GitLab’s activity grids for visual habit tracking.
+- Built using modern web best practices.
+
+---
+
+*Happy tracking!*
