@@ -55,7 +55,7 @@ export default function Home() {
       <div className="flex justify-center">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 w-[1036px]">
           <p className="text-lg font-semibold mb-4 dark:text-gray-100">
-            Today:
+            {selectedDate ? selectedDate : "Today"}:
           </p>
           {loading ? (
             <div className="text-center text-gray-500 dark:text-gray-400">
@@ -68,13 +68,17 @@ export default function Home() {
                 onComplete={updateHabit}
                 onDelete={deleteHabit}
               />
-              <div className="mt-4">
-                <NewHabitInput
-                  value={newHabit}
-                  onChange={(e) => setNewHabit(e.target.value)}
-                  onBlur={handleNewHabit}
-                />
-              </div>
+              {selectedDate ? (
+                ""
+              ) : (
+                <div className="mt-4">
+                  <NewHabitInput
+                    value={newHabit}
+                    onChange={(e) => setNewHabit(e.target.value)}
+                    onBlur={handleNewHabit}
+                  />
+                </div>
+              )}
             </>
           )}
         </div>

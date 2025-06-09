@@ -7,7 +7,7 @@ export async function GET(request) {
     const connection = await connectToDatabase();
 
     if (date === null) {
-      date = "CURDATE()";
+      date = new Date().toISOString().slice(0, 10);
     }
 
     let [rows] = await connection.execute(
