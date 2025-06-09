@@ -1,11 +1,42 @@
+"use client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
-export default async function Home() {
-  const result = await fetch("http://localhost:3000/api/habits", {
-    cache: "no-store",
-  });
+export default function Home() {
+  const [habits, setHabits] = useState([]);
+  const [newHabit, setNewHabit] = useState("");
 
-  const habits = await result.json();
+  // -- Create
+  const handleInputChange = (e) => {
+    setNewHabit(e.target.value);
+  };
+
+  const handleInputBlur = async () => {
+    if (!newHabit.trim()) return;
+    const result = await fetch("/api/habits", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: newHabit, frequency: "daily" }),
+    });
+    if (result.ok) {
+      const created = await result.json();
+      setHabits([...habits, created]);
+      setNewHabit("");
+    }
+  };
+
+  // -- Read
+  useEffect(() => {
+    fetch("/api/habits", { cache: "no-store" })
+      .then((result) => result.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setHabits(data);
+        } else {
+          setHabits([]);
+        }
+      });
+  }, []);
 
   return (
     <div>
@@ -23,14 +54,31 @@ export default async function Home() {
             </tr>
           </thead>
           <tbody>
-            {habits.map((habit) => (
-              <tr key={habit.id}>
-                <td>{habit.title}</td>
-                <td>
-                  <input type="checkbox" />
-                </td>
+            {habits.length === 0 ? (
+              <tr>
+                <td colSpan={2}>No habits found.</td>
               </tr>
-            ))}
+            ) : (
+              habits.map((habit) => (
+                <tr key={habit.id}>
+                  <td>{habit.title}</td>
+                  <td>
+                    <input type="checkbox" />
+                  </td>
+                </tr>
+              ))
+            )}
+            <tr key="new-habit">
+              <td>
+                <input
+                  type="text"
+                  value={newHabit}
+                  onChange={handleInputChange}
+                  onBlur={handleInputBlur}
+                  placeholder="Add new habit"
+                />
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
