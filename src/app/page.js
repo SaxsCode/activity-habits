@@ -16,7 +16,7 @@ export default function Home() {
     const result = await fetch("/api/habits", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: newHabit, frequency: "daily" }),
+      body: JSON.stringify({ title: newHabit }),
     });
     if (result.ok) {
       const created = await result.json();
@@ -38,6 +38,18 @@ export default function Home() {
       });
   }, []);
 
+  // -- Delete
+  const handleDelete = async (habitId) => {
+    const result = await fetch("/api/habits", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: habitId }),
+    });
+    if (result.ok) {
+      setHabits(habits.filter((habit) => habit.id !== habitId));
+    }
+  };
+
   return (
     <div>
       <div className="activity">
@@ -50,13 +62,14 @@ export default function Home() {
           <thead>
             <tr>
               <th>Habit</th>
-              <th>Completed</th>
+              <th>Complete</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>
             {habits.length === 0 ? (
               <tr>
-                <td colSpan={2}>No habits found.</td>
+                <td colSpan={3}>No habits found.</td>
               </tr>
             ) : (
               habits.map((habit) => (
@@ -64,6 +77,14 @@ export default function Home() {
                   <td>{habit.title}</td>
                   <td>
                     <input type="checkbox" />
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(habit.id)}
+                    >
+                      X
+                    </button>
                   </td>
                 </tr>
               ))

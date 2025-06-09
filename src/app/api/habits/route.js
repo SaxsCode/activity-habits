@@ -48,3 +48,37 @@ export async function POST(request) {
     });
   }
 }
+
+export async function DELETE(request) {
+  try {
+    const data = await request.json();
+    const { id } = data;
+    const connection = await connectToDatabase();
+
+    if (!id) {
+      return new Response(JSON.stringify({ error: "Missing habit ID " }), {
+        status: 400,
+      });
+    }
+
+    const [result] = await connection.execute(
+      "DELETE FROM `habits` WHERE id = ?",
+      [id],
+    );
+
+    if (result.affectedRows === 0) {
+      return new Respone(JSON.stringify({ error: "Habit not found" }), {
+        status: 404,
+      });
+    }
+
+    return new Response(JSON.stringify({ message: "Habit deleted" }), {
+      status: 200,
+    });
+  } catch (error) {
+    console.error("Error connecting to the database:", error);
+    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
+      status: 500,
+    });
+  }
+}
