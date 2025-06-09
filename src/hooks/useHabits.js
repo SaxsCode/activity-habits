@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 export default function useHabits() {
   const [habits, setHabits] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   // Create
   const createHabit = async (title) => {
@@ -18,7 +17,6 @@ export default function useHabits() {
 
   // Read
   const fetchHabits = async (selectedDate = null) => {
-    setLoading(true);
     const url = selectedDate
       ? `/api/habits?date=${encodeURIComponent(selectedDate)}`
       : "/api/habits";
@@ -28,7 +26,6 @@ export default function useHabits() {
     });
     const data = await result.json();
     setHabits(Array.isArray(data) ? data : []);
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -48,11 +45,11 @@ export default function useHabits() {
   };
 
   // Delete
-  const deleteHabit = async (habitId) => {
+  const deleteHabit = async (habitId, selectedDate = null) => {
     const result = await fetch("/api/habits", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: habitId }),
+      body: JSON.stringify({ id: habitId, date: selectedDate }),
     });
     if (result.ok) {
       setHabits(habits.filter((habit) => habit.habit_id !== habitId));
@@ -68,7 +65,6 @@ export default function useHabits() {
 
   return {
     habits,
-    loading,
     fetchHabits,
     createHabit,
     updateHabit,

@@ -1,4 +1,9 @@
-export default function HabitTable({ habits, onComplete, onDelete }) {
+export default function HabitTable({
+  habits,
+  onComplete,
+  onDelete,
+  selectedDate,
+}) {
   return (
     <table className="min-w-full border border-gray-200 dark:border-gray-700 rounded overflow-hidden">
       <thead>
@@ -44,7 +49,7 @@ export default function HabitTable({ habits, onComplete, onDelete }) {
               <td className="py-2 px-4">
                 <button
                   type="button"
-                  onClick={() => onDelete(habit.habit_id)}
+                  onClick={() => onDelete(habit.habit_id, selectedDate)}
                   className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-bold"
                   aria-label="Delete habit"
                 >

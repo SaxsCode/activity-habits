@@ -9,7 +9,6 @@ import { prepareActivityData } from "@/lib/prepareActivityData";
 export default function Home() {
   const {
     habits,
-    loading,
     fetchHabits,
     createHabit,
     updateHabit,
@@ -57,30 +56,25 @@ export default function Home() {
           <p className="text-lg font-semibold mb-4 dark:text-gray-100">
             {selectedDate ? selectedDate : "Today"}:
           </p>
-          {loading ? (
-            <div className="text-center text-gray-500 dark:text-gray-400">
-              Loading...
-            </div>
-          ) : (
-            <>
-              <HabitTable
-                habits={habits}
-                onComplete={updateHabit}
-                onDelete={deleteHabit}
-              />
-              {selectedDate ? (
-                ""
-              ) : (
-                <div className="mt-4">
-                  <NewHabitInput
-                    value={newHabit}
-                    onChange={(e) => setNewHabit(e.target.value)}
-                    onBlur={handleNewHabit}
-                  />
-                </div>
-              )}
-            </>
-          )}
+          <>
+            <HabitTable
+              habits={habits}
+              onComplete={updateHabit}
+              onDelete={deleteHabit}
+              selectedDate={selectedDate}
+            />
+            {selectedDate ? (
+              ""
+            ) : (
+              <div className="mt-4">
+                <NewHabitInput
+                  value={newHabit}
+                  onChange={(e) => setNewHabit(e.target.value)}
+                  onBlur={handleNewHabit}
+                />
+              </div>
+            )}
+          </>
         </div>
       </div>
     </div>

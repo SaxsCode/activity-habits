@@ -118,6 +118,7 @@ export async function DELETE(request) {
   try {
     const data = await request.json();
     const { id } = data;
+    const { date } = data;
     const connection = await connectToDatabase();
 
     if (!id) {
@@ -126,15 +127,32 @@ export async function DELETE(request) {
       });
     }
 
+    let queryDate = date;
+    if (date === null) {
+      queryDate = new Date().toISOString().slice(0, 10);
+    }
+
+    // delete selected habit
     const [result] = await connection.execute(
-      "DELETE FROM `habits_log` WHERE habit_id = ? AND date = CURDATE()",
-      [id],
+      "DELETE FROM `habits_log` WHERE habit_id = ? AND date = ?",
+      [id, queryDate],
     );
 
-    const [update] = await connection.execute(
-      "UPDATE `habits` SET active = 0 WHERE id = ?",
-      [id],
-    );
+    // set habit to unactive, only when no date is selected
+    if (date === null) {
+      const [update] = await connection.execute(
+        `UPDATE habits SET active = 0 WHERE id = ?`,
+        [id],
+      );
+    }
+
+    // cleanup unactive habits which are not used in logs
+    const [cleanup] = await connection.execute(`
+            DELETE FROM habits
+            WHERE NOT EXISTS (
+              SELECT 1 FROM habits_log WHERE habits_log.habit_id = habits.id)
+            AND habits.active = 0
+    `);
 
     if (result.affectedRows === 0) {
       return new Response(JSON.stringify({ error: "Habit not found" }), {
