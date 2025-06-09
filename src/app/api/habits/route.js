@@ -69,7 +69,7 @@ export async function POST(request) {
 
     // insert habit
     const [row] = await connection.execute(
-      "INSERT INTO `habits` (title, created_at) VALUES (?, NOW())",
+      "INSERT INTO `habits` (title, created_at, active) VALUES (?, NOW(), 1)",
       [title],
     );
 
@@ -119,6 +119,11 @@ export async function DELETE(request) {
 
     const [result] = await connection.execute(
       "DELETE FROM `habits_log` WHERE habit_id = ? AND date = CURDATE()",
+      [id],
+    );
+
+    const [update] = await connection.execute(
+      "UPDATE `habits` SET active = 0 WHERE id = ?",
       [id],
     );
 
