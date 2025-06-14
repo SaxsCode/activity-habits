@@ -14,10 +14,6 @@ export default function LoginPage() {
     }
   }, [status, router]);
 
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div style={{ textAlign: "center", marginTop: "4rem" }}>
       <h1>Sign in</h1>
@@ -33,7 +29,7 @@ export default function LoginPage() {
         }}
         onClick={() => signIn("GitHub")}
       >
-        Sign in with Google
+        Sign in with GitHub
       </button>
     </div>
   );

@@ -13,7 +13,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    if (status !== "authenticated") {
+    if (status === "unauthenticated") {
       router.replace("/login");
     }
   }, [status, router]);
