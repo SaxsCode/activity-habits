@@ -21,7 +21,7 @@ export default function Home() {
   useEffect(() => {
     async function ensureUserInDb() {
       if (session?.user) {
-        await fetch("/api/users/ensure", {
+        await fetch("/api/users", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ user: session.user }),
