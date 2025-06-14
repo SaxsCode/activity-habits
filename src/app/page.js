@@ -5,8 +5,19 @@ import HabitTable from "@/components/HabitTable";
 import NewHabitInput from "@/components/NewHabitInput";
 import useHabits from "@/hooks/useHabits";
 import { prepareActivityData } from "@/lib/prepareActivityData";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status !== "authenticated") {
+      router.replace("/login");
+    }
+  }, [status, router]);
+
   const {
     habits,
     fetchHabits,
