@@ -18,6 +18,19 @@ export default function Home() {
     }
   }, [status, router]);
 
+  useEffect(() => {
+    async function ensureUserInDb() {
+      if (session?.user) {
+        await fetch("/api/users/ensure", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: session.user }),
+        });
+      }
+    }
+    ensureUserInDb();
+  }, [session]);
+
   const {
     habits,
     fetchHabits,
@@ -25,7 +38,7 @@ export default function Home() {
     updateHabit,
     deleteHabit,
     fetchActivityLogs,
-  } = useHabits();
+  } = useHabits(session?.user);
   const [newHabit, setNewHabit] = useState("");
   const [activityData, setActivityData] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
