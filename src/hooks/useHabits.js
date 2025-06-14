@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 
-export default function useHabits() {
+export default function useHabits(user) {
   const [habits, setHabits] = useState([]);
 
   // Create
   const createHabit = async (title) => {
+    if (!user) return;
     const result = await fetch("/api/habits", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title }),
+      body: JSON.stringify({ title, user }),
     });
     if (result.ok) {
       await fetchHabits();
@@ -17,9 +18,11 @@ export default function useHabits() {
 
   // Read
   const fetchHabits = async (selectedDate = null) => {
+    console.log(user);
+    if (!user) return;
     const url = selectedDate
-      ? `/api/habits?date=${encodeURIComponent(selectedDate)}`
-      : "/api/habits";
+      ? `/api/habits?user=${encodeURIComponent(user.id)}&date=${encodeURIComponent(selectedDate)}`
+      : `/api/habits?user=${encodeURIComponent(user.id)}`;
 
     const result = await fetch(url, {
       cache: "no-store",
@@ -29,8 +32,10 @@ export default function useHabits() {
   };
 
   useEffect(() => {
-    fetchHabits();
-  }, []);
+    if (user) {
+      fetchHabits();
+    }
+  }, [user]);
 
   // Update
   const updateHabit = async (logId, completed) => {

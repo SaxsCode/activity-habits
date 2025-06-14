@@ -4,6 +4,7 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     let date = searchParams.get("date");
+    let user = searchParams.get("user");
     const connection = await connectToDatabase();
 
     if (date === null) {
@@ -20,20 +21,24 @@ export async function GET(request) {
         habit.title
       FROM habits_log AS log
       INNER JOIN habits AS habit ON habit.id = log.habit_id
-      WHERE log.date = ?
+      WHERE log.date = ? AND habit.user_id = ?
     `,
-      [date],
+      [date, user],
     );
 
     // if log is not set yet
     if (rows.length === 0) {
-      const [fallbackRows] = await connection.execute(`
+      const [fallbackRows] = await connection.execute(
+        `
         SELECT 
           habit.id AS habit_id,
           habit.title
         FROM habits AS habit
         WHERE habit.active = 1
-      `);
+          AND habit.user_id = ?
+      `,
+        [user],
+      );
 
       const insertedLogs = [];
       for (const habit of fallbackRows) {
@@ -73,13 +78,13 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const data = await request.json();
-    const { title } = data;
+    const { title, user } = data;
     const connection = await connectToDatabase();
 
     // insert habit
     const [row] = await connection.execute(
-      "INSERT INTO `habits` (title, created_at, active) VALUES (?, NOW(), 1)",
-      [title],
+      "INSERT INTO `habits` (title, created_at, active, user_id) VALUES (?, NOW(), 1, ?)",
+      [title, user.id],
     );
 
     if (!row.affectedRows) {
@@ -117,8 +122,7 @@ export async function POST(request) {
 export async function DELETE(request) {
   try {
     const data = await request.json();
-    const { id } = data;
-    const { date } = data;
+    const { id, date } = data;
     const connection = await connectToDatabase();
 
     if (!id) {
