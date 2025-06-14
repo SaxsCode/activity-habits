@@ -10,7 +10,20 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { data: session, status } = useSession();
+  const user = session?.user;
+
   const router = useRouter();
+  const {
+    habits,
+    fetchHabits,
+    createHabit,
+    updateHabit,
+    deleteHabit,
+    fetchActivityLogs,
+  } = useHabits(user);
+  const [newHabit, setNewHabit] = useState("");
+  const [activityData, setActivityData] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -31,24 +44,12 @@ export default function Home() {
     ensureUserInDb();
   }, [session]);
 
-  const {
-    habits,
-    fetchHabits,
-    createHabit,
-    updateHabit,
-    deleteHabit,
-    fetchActivityLogs,
-  } = useHabits(session?.user);
-  const [newHabit, setNewHabit] = useState("");
-  const [activityData, setActivityData] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(null);
-
   useEffect(() => {
-    if (selectedDate === null) {
+    if (!user || selectedDate === null) {
       return;
     }
     fetchHabits(selectedDate);
-  }, [selectedDate]);
+  }, [selectedDate, user]);
 
   useEffect(() => {
     async function loadActivity() {
@@ -59,6 +60,9 @@ export default function Home() {
     loadActivity();
   }, [habits]);
 
+  if (status === "loading" || !session?.user) {
+    return <div>Loading...</div>;
+  }
   const handleNewHabit = async () => {
     if (!newHabit.trim()) return;
     await createHabit(newHabit);
