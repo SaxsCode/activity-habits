@@ -6,24 +6,11 @@ export default function HabitTable({
 }) {
   return (
     <table className="min-w-full border border-gray-200 dark:border-gray-700 rounded overflow-hidden">
-      <thead>
-        <tr className="bg-gray-100 dark:bg-gray-700">
-          <th className="py-2 px-4 text-left font-medium dark:text-gray-100">
-            Habit
-          </th>
-          <th className="py-2 px-4 text-left font-medium dark:text-gray-100">
-            Complete
-          </th>
-          <th className="py-2 px-4 text-left font-medium dark:text-gray-100">
-            Delete
-          </th>
-        </tr>
-      </thead>
       <tbody>
         {habits.length === 0 ? (
           <tr>
             <td
-              colSpan={3}
+              colSpan={2}
               className="py-4 text-center text-gray-500 dark:text-gray-400"
             >
               No habits found.
@@ -36,25 +23,27 @@ export default function HabitTable({
               className="border-t border-gray-200 dark:border-gray-700"
             >
               <td className="py-2 px-4 dark:text-gray-100">{habit.title}</td>
-              <td className="py-2 px-4">
-                <input
-                  type="checkbox"
-                  checked={habit.completed}
-                  onChange={() =>
-                    onComplete(habit.log_id, habit.completed === 1 ? 0 : 1)
-                  }
-                  className="h-4 w-4 text-blue-600 rounded"
-                />
-              </td>
-              <td className="py-2 px-4">
-                <button
-                  type="button"
-                  onClick={() => onDelete(habit.habit_id, selectedDate)}
-                  className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-bold"
-                  aria-label="Delete habit"
-                >
-                  ×
-                </button>
+              <td className="py-2 px-4 text-right">
+                <div className="flex items-center justify-end gap-4">
+                  <input
+                    type="checkbox"
+                    checked={habit.completed}
+                    onChange={() =>
+                      onComplete(habit.log_id, habit.completed === 1 ? 0 : 1)
+                    }
+                    className="h-5 w-5 text-blue-600 rounded border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
+                    style={{ transition: "none" }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => onDelete(habit.habit_id, selectedDate)}
+                    className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-bold text-lg focus:outline-none focus:underline"
+                    aria-label="Delete habit"
+                    title="Delete"
+                  >
+                    ×
+                  </button>
+                </div>
               </td>
             </tr>
           ))
