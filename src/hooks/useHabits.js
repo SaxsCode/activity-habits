@@ -65,9 +65,13 @@ export default function useHabits(user) {
   };
 
   // Activity
-  const fetchActivityLogs = async () => {
+  const fetchActivityLogs = async (user) => {
     if (!user) return [];
-    const result = await fetch("/api/activity");
+    const url = `/api/activity?user=${encodeURIComponent(user.id)}`;
+    const result = await fetch(url, {
+      cache: "no-store",
+    });
+
     if (!result.ok) throw new Error("Failed to fetch activity logs");
     return result.json();
   };

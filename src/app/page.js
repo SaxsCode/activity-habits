@@ -55,7 +55,7 @@ export default function Home() {
   useEffect(() => {
     async function loadActivity() {
       if (!user) return;
-      const logs = await fetchActivityLogs();
+      const logs = await fetchActivityLogs(user);
       const data = await prepareActivityData(logs, 364);
       setActivityData(data);
     }
