@@ -11,7 +11,9 @@ export async function POST(request) {
       await insertUser(user.email);
     }
 
-    return Response.json({ ok: true });
+    const userFromDb = existing || (await insertUser(user.email));
+
+    return Response.json({ user: userFromDb });
   } catch (error) {
     console.error("API error:", error);
     return Response.json({ error: "Internal Server Error" }, { status: 500 });
