@@ -10,9 +10,9 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { data: session, status } = useSession();
-  const user = session?.user;
-
+  const [user, setUser] = useState(null);
   const router = useRouter();
+
   const {
     habits,
     fetchHabits,
@@ -21,6 +21,7 @@ export default function Home() {
     deleteHabit,
     fetchActivityLogs,
   } = useHabits(user);
+
   const [newHabit, setNewHabit] = useState("");
   const [activityData, setActivityData] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -34,35 +35,33 @@ export default function Home() {
   useEffect(() => {
     async function ensureUserInDb() {
       if (session?.user) {
-        await fetch("/api/users", {
+        const result = await fetch("/api/users", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ user: session.user }),
         });
+        const data = await result.json();
+        setUser(data.user);
       }
     }
     ensureUserInDb();
   }, [session]);
 
   useEffect(() => {
-    if (!user || selectedDate === null) {
-      return;
-    }
+    if (!user || selectedDate === null) return;
     fetchHabits(selectedDate);
   }, [selectedDate, user]);
 
   useEffect(() => {
     async function loadActivity() {
+      if (!user) return;
       const logs = await fetchActivityLogs();
       const data = await prepareActivityData(logs, 364);
       setActivityData(data);
     }
     loadActivity();
-  }, [habits]);
+  }, [habits, user]);
 
-  if (status === "loading" || !session?.user) {
-    return <div>Loading...</div>;
-  }
   const handleNewHabit = async () => {
     if (!newHabit.trim()) return;
     await createHabit(newHabit);

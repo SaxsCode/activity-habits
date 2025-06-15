@@ -1,7 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function useHabits(user) {
   const [habits, setHabits] = useState([]);
+
+  useEffect(() => {
+    if (!user) {
+      setHabits([]);
+      return;
+    }
+    fetchHabits();
+  }, [user]);
 
   // Create
   const createHabit = async (title) => {
@@ -18,7 +26,6 @@ export default function useHabits(user) {
 
   // Read
   const fetchHabits = async (selectedDate = null) => {
-    console.log(user);
     if (!user) return;
     const url = selectedDate
       ? `/api/habits?user=${encodeURIComponent(user.id)}&date=${encodeURIComponent(selectedDate)}`
@@ -31,17 +38,12 @@ export default function useHabits(user) {
     setHabits(Array.isArray(data) ? data : []);
   };
 
-  useEffect(() => {
-    if (user) {
-      fetchHabits();
-    }
-  }, [user]);
-
   // Update
   const updateHabit = async (logId, completed) => {
+    if (!user) return;
     const result = await fetch("/api/habits", {
       method: "PUT",
-      headers: { "Content-Type": "applicaton/json" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: logId, completed }),
     });
     if (result.ok) {
@@ -51,18 +53,20 @@ export default function useHabits(user) {
 
   // Delete
   const deleteHabit = async (habitId, selectedDate = null) => {
+    if (!user) return;
     const result = await fetch("/api/habits", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: habitId, date: selectedDate }),
     });
     if (result.ok) {
-      setHabits(habits.filter((habit) => habit.habit_id !== habitId));
+      setHabits((prev) => prev.filter((habit) => habit.habit_id !== habitId));
     }
   };
 
   // Activity
   const fetchActivityLogs = async () => {
+    if (!user) return [];
     const result = await fetch("/api/activity");
     if (!result.ok) throw new Error("Failed to fetch activity logs");
     return result.json();
@@ -74,7 +78,6 @@ export default function useHabits(user) {
     createHabit,
     updateHabit,
     deleteHabit,
-    fetchHabits,
     fetchActivityLogs,
   };
 }
