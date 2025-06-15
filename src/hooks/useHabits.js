@@ -39,15 +39,17 @@ export default function useHabits(user) {
   };
 
   // Update
-  const updateHabit = async (logId, completed) => {
+  const updateHabit = async (logId, completed, selectedDate = null) => {
     if (!user) return;
     const result = await fetch("/api/habits", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: logId, completed }),
+      body: JSON.stringify({ id: logId, completed, date: selectedDate }),
     });
+    const data = await result.json();
+    const { date } = data;
     if (result.ok) {
-      await fetchHabits();
+      await fetchHabits(date);
     }
   };
 

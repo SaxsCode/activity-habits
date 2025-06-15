@@ -36,9 +36,7 @@ export default function ActivityGrid({ data, onDayClick }) {
           {week.map((day, j) => {
             return (
               <div
-                onClick={() =>
-                  onDayClick(day.totalHabits === 0 ? null : day.date)
-                }
+                onClick={() => onDayClick(day.date)}
                 key={j}
                 className={`w-4 h-4 mb-1 rounded ${getColor(day.completed, day.totalHabits)}`}
                 title={`${day.date}: ${day.completed} completed`}

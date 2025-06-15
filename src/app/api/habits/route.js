@@ -43,12 +43,12 @@ export async function GET(request) {
       const insertedLogs = [];
       for (const habit of fallbackRows) {
         const [result] = await connection.execute(
-          "INSERT INTO habits_log (habit_id, date, completed) VALUES (?, CURDATE(), 0)",
-          [habit.habit_id],
+          "INSERT INTO habits_log (habit_id, date, completed, user_id) VALUES (?, ?, 0, ?)",
+          [habit.habit_id, date, user],
         );
         insertedLogs.push({
           log_id: result.insertId,
-          date: "CURDATE()",
+          date: date,
           completed: 0,
           habit_id: habit.habit_id,
           title: habit.title,
@@ -178,7 +178,7 @@ export async function DELETE(request) {
 export async function PUT(request) {
   try {
     const data = await request.json();
-    const { id, completed } = data;
+    const { id, completed, date } = data;
     const connection = await connectToDatabase();
 
     if (!id) {
@@ -198,9 +198,12 @@ export async function PUT(request) {
       });
     }
 
-    return new Response(JSON.stringify({ message: "Habit updated" }), {
-      status: 200,
-    });
+    return new Response(
+      JSON.stringify({ date: date, message: "Habit updated" }),
+      {
+        status: 200,
+      },
+    );
   } catch (error) {
     console.error("Error connecting to the database:", error);
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {

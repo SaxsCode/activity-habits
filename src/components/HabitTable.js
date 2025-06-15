@@ -29,7 +29,11 @@ export default function HabitTable({
                     type="checkbox"
                     checked={habit.completed}
                     onChange={() =>
-                      onComplete(habit.log_id, habit.completed === 1 ? 0 : 1)
+                      onComplete(
+                        habit.log_id,
+                        habit.completed === 1 ? 0 : 1,
+                        selectedDate,
+                      )
                     }
                     className="h-5 w-5 text-blue-600 rounded border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
                     style={{ transition: "none" }}
