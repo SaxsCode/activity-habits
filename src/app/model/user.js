@@ -31,6 +31,8 @@ export async function insertUser(email) {
       [email],
     );
 
+    await connection.end();
+
     if (!user.affectedRows) {
       throw new Error("Could not insert user");
     }

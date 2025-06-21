@@ -4,7 +4,6 @@ import { getUserByEmail, insertUser } from "@/app/model/user";
 export async function POST(request) {
   try {
     const { user } = await request.json();
-    await connectToDatabase();
 
     const existing = await getUserByEmail(user.email);
     if (!existing) {
