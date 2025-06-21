@@ -99,6 +99,8 @@ export async function POST(request) {
       [row.insertId, user.id],
     );
 
+    await connection.end();
+
     if (!log.affectedRows) {
       return new Response(
         JSON.stringify({ error: "Could not insert habit log" }),
@@ -158,6 +160,8 @@ export async function DELETE(request) {
             AND habits.active = 0
     `);
 
+    await connection.end();
+
     if (result.affectedRows === 0) {
       return new Response(JSON.stringify({ error: "Habit not found" }), {
         status: 404,
@@ -191,6 +195,8 @@ export async function PUT(request) {
       "UPDATE `habits_log` SET completed = ? WHERE id = ?",
       [completed, id],
     );
+
+    await connection.end();
 
     if (result.affectedRows === 0) {
       return new Response(JSON.stringify({ error: "Habit not found" }), {
