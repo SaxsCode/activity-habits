@@ -1,11 +1,13 @@
 import { connectToDatabase } from "@/lib/db";
 
 export async function GET(request) {
+  let connection;
   try {
     const { searchParams } = new URL(request.url);
     let date = searchParams.get("date");
     let user = searchParams.get("user");
-    const connection = await connectToDatabase();
+
+    connection = await connectToDatabase();
 
     if (date === null) {
       date = new Date().toISOString().slice(0, 10);
@@ -58,8 +60,6 @@ export async function GET(request) {
       rows = insertedLogs;
     }
 
-    await connection.end();
-
     if (rows.length === 0) {
       return new Response(JSON.stringify({ error: "Habits not found." }), {
         status: 404,
@@ -72,14 +72,20 @@ export async function GET(request) {
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
     });
+  } finally {
+    if (connection) {
+      await connection.end();
+    }
   }
 }
 
 export async function POST(request) {
+  let connection;
   try {
     const data = await request.json();
     const { title, user } = data;
-    const connection = await connectToDatabase();
+
+    connection = await connectToDatabase();
 
     // insert habit
     const [row] = await connection.execute(
@@ -99,8 +105,6 @@ export async function POST(request) {
       [row.insertId, user.id],
     );
 
-    await connection.end();
-
     if (!log.affectedRows) {
       return new Response(
         JSON.stringify({ error: "Could not insert habit log" }),
@@ -118,14 +122,20 @@ export async function POST(request) {
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
     });
+  } finally {
+    if (connection) {
+      await connection.end();
+    }
   }
 }
 
 export async function DELETE(request) {
+  let connection;
   try {
     const data = await request.json();
     const { id, date } = data;
-    const connection = await connectToDatabase();
+
+    connection = await connectToDatabase();
 
     if (!id) {
       return new Response(JSON.stringify({ error: "Missing habit ID " }), {
@@ -160,8 +170,6 @@ export async function DELETE(request) {
             AND habits.active = 0
     `);
 
-    await connection.end();
-
     if (result.affectedRows === 0) {
       return new Response(JSON.stringify({ error: "Habit not found" }), {
         status: 404,
@@ -176,14 +184,19 @@ export async function DELETE(request) {
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
     });
+  } finally {
+    if (connection) {
+      await connection.end();
+    }
   }
 }
 
 export async function PUT(request) {
+  let connection;
   try {
     const data = await request.json();
     const { id, completed, date } = data;
-    const connection = await connectToDatabase();
+    connection = await connectToDatabase();
 
     if (!id) {
       return new Response(JSON.stringify({ error: "Missing log ID " }), {
@@ -195,8 +208,6 @@ export async function PUT(request) {
       "UPDATE `habits_log` SET completed = ? WHERE id = ?",
       [completed, id],
     );
-
-    await connection.end();
 
     if (result.affectedRows === 0) {
       return new Response(JSON.stringify({ error: "Habit not found" }), {
@@ -215,5 +226,9 @@ export async function PUT(request) {
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
     });
+  } finally {
+    if (connection) {
+      await connection.end();
+    }
   }
 }

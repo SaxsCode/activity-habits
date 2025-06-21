@@ -1,8 +1,9 @@
 import { connectToDatabase } from "@/lib/db";
 
 export async function GET(request) {
+  let connection;
   try {
-    const connection = await connectToDatabase();
+    connection = await connectToDatabase();
     const { searchParams } = new URL(request.url);
     const user = searchParams.get("user");
     const [logs] = await connection.execute(
@@ -19,12 +20,15 @@ export async function GET(request) {
     `,
       [user],
     );
-    await connection.end();
 
     return new Response(JSON.stringify(logs), { status: 200 });
   } catch (error) {
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
     });
+  } finally {
+    if (connection) {
+      await connection.end();
+    }
   }
 }

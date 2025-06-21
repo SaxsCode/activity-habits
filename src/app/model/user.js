@@ -1,15 +1,14 @@
 import { connectToDatabase } from "@/lib/db";
 
 export async function getUserByEmail(email) {
+  let connection;
   try {
-    const connection = await connectToDatabase();
+    connection = await connectToDatabase();
 
     const [user] = await connection.execute(
       ` SELECT * FROM users WHERE email = ? LIMIT 1 `,
       [email],
     );
-
-    await connection.end();
 
     if (user.length === 0) {
       return null;
@@ -19,19 +18,22 @@ export async function getUserByEmail(email) {
   } catch (error) {
     console.error("Error connecting to the database:", error);
     throw error;
+  } finally {
+    if (connection) {
+      await connection.end();
+    }
   }
 }
 
 export async function insertUser(email) {
+  let connection;
   try {
-    const connection = await connectToDatabase();
+    connection = await connectToDatabase();
 
     const [user] = await connection.execute(
       "INSERT INTO `users` (email) VALUES (?)",
       [email],
     );
-
-    await connection.end();
 
     if (!user.affectedRows) {
       throw new Error("Could not insert user");
@@ -40,5 +42,9 @@ export async function insertUser(email) {
     return { id: user.insertId, email };
   } catch (error) {
     console.error("Error connecting to the database:", error);
+  } finally {
+    if (connection) {
+      await connection.end();
+    }
   }
 }
