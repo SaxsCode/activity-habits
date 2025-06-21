@@ -8,10 +8,10 @@ export async function POST(request) {
 
     const existing = await getUserByEmail(user.email);
     if (!existing) {
-      await insertUser(user.email);
+      existing = await insertUser(user.email);
     }
 
-    const userFromDb = existing || (await insertUser(user.email));
+    const userFromDb = existing;
 
     return Response.json({ user: userFromDb });
   } catch (error) {

@@ -95,8 +95,8 @@ export async function POST(request) {
 
     // insert log
     const [log] = await connection.execute(
-      "INSERT INTO `habits_log` (habit_id, date, completed) VALUES (?, NOW(), 0)",
-      [row.insertId],
+      "INSERT INTO `habits_log` (habit_id, date, completed, user_id) VALUES (?, NOW(), 0, ?)",
+      [row.insertId, user.id],
     );
 
     if (!log.affectedRows) {
