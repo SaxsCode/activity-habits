@@ -68,42 +68,43 @@ export default function Home() {
     setNewHabit("");
   };
 
-  return (
-    <div className="p-6 w-full">
-      <div className="flex justify-center mb-6">
-        <div className="w-[1036px]">
-          <p className="text-lg font-semibold mb-2 dark:text-gray-100">
-            Activity:
-          </p>
-          <ActivityGrid data={activityData} onDayClick={setSelectedDate} />
-        </div>
-      </div>
-      <div className="flex justify-center">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 w-[1036px]">
-          <p className="text-lg font-semibold mb-4 dark:text-gray-100">
-            {selectedDate ? selectedDate : "Today"}:
-          </p>
-          <>
-            <HabitTable
-              habits={habits}
-              onComplete={updateHabit}
-              onDelete={deleteHabit}
-              selectedDate={selectedDate}
-            />
-            {selectedDate ? (
-              ""
-            ) : (
-              <div className="mt-4">
-                <NewHabitInput
-                  value={newHabit}
-                  onChange={(e) => setNewHabit(e.target.value)}
-                  onBlur={handleNewHabit}
-                />
-              </div>
-            )}
-          </>
-        </div>
+return (
+  <div className="p-6 w-full">
+    <div className="flex justify-center mb-6">
+      <div className="w-full max-w-[1036px]"> {/* Changed from w-[1036px] */}
+        <p className="text-lg font-semibold mb-2 dark:text-gray-100">
+          Activity:
+        </p>
+        <ActivityGrid data={activityData} onDayClick={setSelectedDate} />
       </div>
     </div>
-  );
+    <div className="flex justify-center">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 w-full max-w-[1036px]">
+        <p className="text-lg font-semibold mb-4 dark:text-gray-100">
+          {selectedDate ? selectedDate : "Today"}:
+        </p>
+        <>
+          <HabitTable
+            habits={habits}
+            onComplete={updateHabit}
+            onDelete={deleteHabit}
+            selectedDate={selectedDate}
+          />
+          {selectedDate ? (
+            ""
+          ) : (
+            <div className="mt-4">
+              <NewHabitInput
+                value={newHabit}
+                onChange={(e) => setNewHabit(e.target.value)}
+                onBlur={handleNewHabit}
+              />
+            </div>
+          )}
+        </>
+      </div>
+    </div>
+  </div>
+);
+
 }
