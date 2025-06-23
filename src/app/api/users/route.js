@@ -5,7 +5,7 @@ export async function POST(request) {
   try {
     const { user } = await request.json();
 
-    const existing = await getUserByEmail(user.email);
+    let existing = await getUserByEmail(user.email);
     if (!existing) {
       existing = await insertUser(user.email);
     }
