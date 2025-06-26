@@ -5,11 +5,11 @@ function getColor(count, total) {
   if (count === 0) return "bg-gray-800";
   const percentage = (count / total) * 100;
 
-  if (percentage === 100) return "bg-blue-400";
-  if (percentage >= 75) return "bg-blue-300";
-  if (percentage >= 50) return "bg-gray-400";
-  if (percentage >= 25) return "bg-gray-500";
-  return "bg-gray-600";
+  if (percentage === 100) return "bg-blue-600";
+  if (percentage >= 75) return "bg-blue-400";
+  if (percentage >= 50) return "bg-blue-300";
+  if (percentage >= 25) return "bg-blue-200";
+  return "bg-gray-400";
 }
 
 export default function ActivityGrid({ data, onDayClick }) {
